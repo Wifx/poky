@@ -7147,6 +7147,32 @@ system and gives an overview of their function and contents.
    :term:`SSTATE_DIR`
       The directory for the shared state cache.
 
+   :term:`SSTATE_EXCLUDEDEPS_SYSROOT`
+      This variable allows to specify indirect dependencies to exclude
+      from sysroots, for example to avoid the situations when a dependency on
+      any ``-native`` recipe will pull in all dependencies of that recipe
+      in the recipe sysroot. This behaviour might not always be wanted,
+      for example when that ``-native`` recipe depends on build tools
+      that are not relevant for the current recipe.
+
+      This way, irrelevant dependencies are ignored, which could have
+      prevented the reuse of prebuilt artifacts stored in the Shared
+      State Cache.
+
+      :term:`SSTATE_EXCLUDEDEPS_SYSROOT` is evaluated as two regular
+      expressions of recipe and dependency to ignore. An example
+      is the rule in :oe_git:`meta/conf/layer.conf </openembedded-core/tree/meta/conf/layer.conf>`::
+
+         # Nothing needs to depend on libc-initial
+         # base-passwd/shadow-sysroot don't need their dependencies
+         SSTATE_EXCLUDEDEPS_SYSROOT += "\
+             .*->.*-initial.* \
+             .*(base-passwd|shadow-sysroot)->.* \
+         "
+
+      The ``->`` substring represents the dependency between
+      the two regular expressions.
+
    :term:`SSTATE_MIRROR_ALLOW_NETWORK`
       If set to "1", allows fetches from mirrors that are specified in
       :term:`SSTATE_MIRRORS` to work even when
@@ -7542,7 +7568,7 @@ system and gives an overview of their function and contents.
       ``SYSTEMD_BOOT_CFG`` as follows:
       ::
 
-         SYSTEMD_BOOT_CFG ?= "${:term:`S`}/loader.conf"
+         SYSTEMD_BOOT_CFG ?= "${S}/loader.conf"
 
       For information on Systemd-boot, see the `Systemd-boot
       documentation <http://www.freedesktop.org/wiki/Software/systemd/systemd-boot/>`__.
@@ -8745,4 +8771,22 @@ system and gives an overview of their function and contents.
 
       The default value of ``XSERVER``, if not specified in the machine
       configuration, is "xserver-xorg xf86-video-fbdev xf86-input-evdev".
-   
+
+   :term:`XZ_THREADS`
+      Specifies the number of parallel threads that should be used when
+      using xz compression.
+
+      By default this scales with core count, but is never set less than 2
+      to ensure that multi-threaded mode is always used so that the output
+      file contents are deterministic. Builds will work with a value of 1
+      but the output will differ compared to the output from the compression
+      generated when more than one thread is used.
+
+      On systems where many tasks run in parallel, setting a limit to this
+      can be helpful in controlling system resource usage.
+
+    :term:`XZ_MEMLIMIT`
+      Specifies the maximum memory the xz compression should use as a percentage
+      of system memory. If unconstrained the xz compressor can use large amounts of
+      memory and become problematic with parallelism elsewhere in the build.
+      "50%" has been found to be a good value.

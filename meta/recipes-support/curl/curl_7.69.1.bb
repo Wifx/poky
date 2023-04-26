@@ -28,6 +28,22 @@ SRC_URI = "https://curl.haxx.se/download/curl-${PV}.tar.bz2 \
            file://CVE-2022-27776.patch \
            file://CVE-2022-27775.patch \
            file://CVE-2022-22576.patch \
+           file://CVE-2022-27774-1.patch \
+           file://CVE-2022-27774-2.patch \
+           file://CVE-2022-27774-3.patch \
+           file://CVE-2022-27774-4.patch \
+           file://CVE-2022-27781.patch \
+           file://CVE-2022-27782-1.patch \
+           file://CVE-2022-27782-2.patch \
+           file://CVE-2022-32206.patch \
+           file://CVE-2022-32207.patch \
+           file://CVE-2022-32208.patch \
+           file://CVE-2022-35252.patch \
+           file://CVE-2022-32221.patch \
+           file://CVE-2022-35260.patch \
+           file://CVE-2022-43552.patch \
+           file://CVE-2023-23916.patch \
+           file://CVE-2023-27534.patch \
 "
 
 SRC_URI[md5sum] = "ec5fc263f898a3dfef08e805f1ecca42"
@@ -35,7 +51,7 @@ SRC_URI[sha256sum] = "2ff5e5bd507adf6aa88ff4bbafd4c7af464867ffb688be93b9930717a5
 
 # Curl has used many names over the years...
 CVE_PRODUCT = "haxx:curl haxx:libcurl curl:curl curl:libcurl libcurl:libcurl daniel_stenberg:curl"
-CVE_CHECK_WHITELIST = "CVE-2021-22922 CVE-2021-22923 CVE-2021-22926 CVE-22945"
+CVE_CHECK_WHITELIST = "CVE-2021-22922 CVE-2021-22923 CVE-2021-22926 CVE-2021-22945"
 
 # As per link https://security-tracker.debian.org/tracker/CVE-2021-22897
 # and https://ubuntu.com/security/CVE-2021-22897

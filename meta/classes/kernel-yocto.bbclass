@@ -194,7 +194,7 @@ do_kernel_metadata() {
 	# SRC_URI. If they were supplied, we convert them into include directives
 	# for the update part of the process
 	for f in ${feat_dirs}; do
-		if [ -d "${WORKDIR}/$f/meta" ]; then
+		if [ -d "${WORKDIR}/$f/kernel-meta" ]; then
 			includes="$includes -I${WORKDIR}/$f/kernel-meta"
 		elif [ -d "${WORKDIR}/../oe-local-files/$f" ]; then
 			includes="$includes -I${WORKDIR}/../oe-local-files/$f"
@@ -269,6 +269,8 @@ do_kernel_metadata() {
 		bbnote "KERNEL_FEATURES: $KERNEL_FEATURES_FINAL"
 		bbnote "Final scc/cfg list: $sccs_defconfig $bsp_definition $sccs $KERNEL_FEATURES_FINAL"
 	fi
+
+	set -e
 }
 
 do_patch() {
@@ -298,6 +300,8 @@ do_patch() {
 			fi
 		done
 	fi
+
+	set -e
 }
 
 do_kernel_checkout() {
@@ -356,6 +360,8 @@ do_kernel_checkout() {
 		git commit -q -m "baseline commit: creating repo for ${PN}-${PV}"
 		git clean -d -f
 	fi
+
+	set -e
 }
 do_kernel_checkout[dirs] = "${S}"
 
@@ -523,6 +529,8 @@ do_validate_branches() {
 			kgit-s2q --clean
 		fi
 	fi
+
+	set -e
 }
 
 OE_TERMINAL_EXPORTS += "KBUILD_OUTPUT"

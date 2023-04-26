@@ -24,7 +24,7 @@ BRANCH ?= "binutils-2_34-branch"
 
 UPSTREAM_CHECK_GITTAGREGEX = "binutils-(?P<pver>\d+_(\d_?)*)"
 
-SRCREV ?= "d4b50999b3b287b5f984ade2f8734aa8c9359440"
+SRCREV ?= "c4e78c0868a22971680217a41fdb73516a26813d"
 BINUTILS_GIT_URI ?= "git://sourceware.org/git/binutils-gdb.git;branch=${BRANCH};protocol=git"
 SRC_URI = "\
      ${BINUTILS_GIT_URI} \
@@ -52,5 +52,6 @@ SRC_URI = "\
      file://CVE-2021-3549.patch \
      file://CVE-2020-16593.patch \
      file://0001-CVE-2021-45078.patch \
+     file://CVE-2022-38533.patch \
 "
 S  = "${WORKDIR}/git"

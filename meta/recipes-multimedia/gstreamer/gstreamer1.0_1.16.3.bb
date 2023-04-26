@@ -41,7 +41,7 @@ PACKAGECONFIG[unwind] = "-Dlibunwind=enabled,-Dlibunwind=disabled,libunwind"
 PACKAGECONFIG[dw] = "-Dlibdw=enabled,-Dlibdw=disabled,elfutils"
 PACKAGECONFIG[bash-completion] = "-Dbash-completion=enabled,-Dbash-completion=disabled,bash-completion"
 PACKAGECONFIG[tools] = "-Dtools=enabled,-Dtools=disabled"
-PACKAGECONFIG[setcap] = ",,libcap libcap-native"
+PACKAGECONFIG[setcap] = "-Dptp-helper-permissions=capabilities,,libcap libcap-native"
 
 # TODO: put this in a gettext.bbclass patch
 def gettext_oemeson(d):
@@ -83,5 +83,12 @@ CVE_CHECK_WHITELIST += "CVE-2021-3522"
 # so we need to ignore the false hits
 CVE_CHECK_WHITELIST += "CVE-2021-3497"
 CVE_CHECK_WHITELIST += "CVE-2021-3498"
+CVE_CHECK_WHITELIST += "CVE-2022-1920"
+CVE_CHECK_WHITELIST += "CVE-2022-1921"
+CVE_CHECK_WHITELIST += "CVE-2022-1922"
+CVE_CHECK_WHITELIST += "CVE-2022-1923"
+CVE_CHECK_WHITELIST += "CVE-2022-1924"
+CVE_CHECK_WHITELIST += "CVE-2022-1925"
+CVE_CHECK_WHITELIST += "CVE-2022-2122"
 
 require gstreamer1.0-ptest.inc

@@ -98,6 +98,45 @@ SRC_URI = "https://download.qemu.org/${BPN}-${PV}.tar.xz \
            file://CVE-2020-13253_4.patch \
            file://CVE-2020-13253_5.patch \
            file://CVE-2020-13791.patch \
+           file://CVE-2022-35414.patch \
+           file://CVE-2020-27821.patch \
+           file://CVE-2020-13754-1.patch \
+           file://CVE-2020-13754-2.patch \
+           file://CVE-2020-13754-3.patch \
+           file://CVE-2020-13754-4.patch \
+           file://CVE-2021-3713.patch \
+           file://CVE-2021-3748.patch \
+           file://CVE-2021-3930.patch \
+           file://CVE-2021-4206.patch \
+           file://CVE-2021-4207.patch \
+           file://CVE-2022-0216-1.patch \
+           file://CVE-2022-0216-2.patch \
+           file://CVE-2021-3750.patch \
+           file://CVE-2021-3638.patch \
+           file://CVE-2021-20196.patch \
+           file://CVE-2021-3507.patch \
+           file://hw-block-nvme-refactor-nvme_addr_read.patch \
+           file://hw-block-nvme-handle-dma-errors.patch \
+           file://CVE-2021-3929.patch \
+           file://CVE-2022-4144.patch \
+           file://CVE-2020-15859.patch \
+           file://CVE-2020-15469-1.patch \
+           file://CVE-2020-15469-2.patch \
+           file://CVE-2020-15469-3.patch \
+           file://CVE-2020-15469-4.patch \
+           file://CVE-2020-15469-5.patch \
+           file://CVE-2020-15469-6.patch \
+           file://CVE-2020-15469-7.patch \
+           file://CVE-2020-15469-8.patch \
+           file://CVE-2020-35504.patch \
+           file://CVE-2020-35505.patch \
+           file://CVE-2022-26354.patch \
+           file://CVE-2021-3409-1.patch \
+           file://CVE-2021-3409-2.patch \
+           file://CVE-2021-3409-3.patch \
+           file://CVE-2021-3409-4.patch \
+           file://CVE-2021-3409-5.patch \
+           file://hw-display-qxl-Pass-requested-buffer-size-to-qxl_phy.patch \
            "
 UPSTREAM_CHECK_REGEX = "qemu-(?P<pver>\d+(\.\d+)+)\.tar"
 
@@ -114,6 +153,9 @@ CVE_CHECK_WHITELIST += "CVE-2007-0998"
 # 'The issues identified by this CVE were determined to not constitute a vulnerability.'
 # https://bugzilla.redhat.com/show_bug.cgi?id=1609015#c11
 CVE_CHECK_WHITELIST += "CVE-2018-18438"
+
+# the issue introduced in v5.1.0-rc0
+CVE_CHECK_WHITELIST += "CVE-2020-27661"
 
 COMPATIBLE_HOST_mipsarchn32 = "null"
 COMPATIBLE_HOST_mipsarchn64 = "null"
@@ -254,6 +296,15 @@ PACKAGECONFIG[xkbcommon] = "--enable-xkbcommon,--disable-xkbcommon,libxkbcommon"
 PACKAGECONFIG[libudev] = "--enable-libudev,--disable-libudev,eudev"
 PACKAGECONFIG[libxml2] = "--enable-libxml2,--disable-libxml2,libxml2"
 PACKAGECONFIG[seccomp] = "--enable-seccomp,--disable-seccomp,libseccomp"
+PACKAGECONFIG[capstone] = "--enable-capstone,--disable-capstone"
+# libnfs is currently provided by meta-kodi
+PACKAGECONFIG[libnfs] = "--enable-libnfs,--disable-libnfs,libnfs"
+PACKAGECONFIG[brlapi] = "--enable-brlapi,--disable-brlapi"
+PACKAGECONFIG[vde] = "--enable-vde,--disable-vde"
+# version 4.2.0 doesn't have an "internal" option for enable-slirp, so use "git" which uses the same configure code path
+PACKAGECONFIG[slirp] = "--enable-slirp=git,--disable-slirp"
+PACKAGECONFIG[rbd] = "--enable-rbd,--disable-rbd"
+PACKAGECONFIG[rdma] = "--enable-rdma,--disable-rdma"
 
 INSANE_SKIP_${PN} = "arch"
 
