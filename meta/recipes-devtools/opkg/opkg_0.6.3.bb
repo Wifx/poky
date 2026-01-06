@@ -31,6 +31,10 @@ inherit autotools pkgconfig ptest
 target_localstatedir := "${localstatedir}"
 OPKGLIBDIR ??= "${target_localstatedir}/lib"
 
+OPKGSTATUSDIR ??= "${OPKGLIBDIR}/opkg/"
+OPKGLISTSDIR ??= "${OPKGLIBDIR}/opkg/lists"
+OPKGINFODIR ??= "${OPKGLIBDIR}/opkg/info"
+
 PACKAGECONFIG ??= "libsolv"
 
 PACKAGECONFIG[gpg] = "--enable-gpg,--disable-gpg,\
@@ -48,12 +52,15 @@ EXTRA_OECONF:append:class-native = " --localstatedir=/${@os.path.relpath('${loca
 do_install:append () {
 	install -d ${D}${sysconfdir}/opkg
 	install -m 0644 ${WORKDIR}/opkg.conf ${D}${sysconfdir}/opkg/opkg.conf
-	echo "option lists_dir   ${OPKGLIBDIR}/opkg/lists"  >>${D}${sysconfdir}/opkg/opkg.conf
-	echo "option info_dir    ${OPKGLIBDIR}/opkg/info"   >>${D}${sysconfdir}/opkg/opkg.conf
+	echo "option lists_dir   ${OPKGLISTSDIR}"  			>>${D}${sysconfdir}/opkg/opkg.conf
+	echo "option info_dir    ${OPKGINFODIR}"   			>>${D}${sysconfdir}/opkg/opkg.conf
 	echo "option status_file ${OPKGLIBDIR}/opkg/status" >>${D}${sysconfdir}/opkg/opkg.conf
 
-	# We need to create the lock directory
+	# We need to create the locks directory
 	install -d ${D}${OPKGLIBDIR}/opkg
+	install -d ${D}${OPKGSTATUSDIR}/
+	install -d ${D}${OPKGLISTSDIR}
+	install -d ${D}${OPKGINFODIR}
 }
 
 do_install_ptest () {

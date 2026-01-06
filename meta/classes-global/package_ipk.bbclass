@@ -22,6 +22,9 @@ OPKG_ARGS += "${@['', '--no-install-recommends'][d.getVar("NO_RECOMMENDATIONS") 
 OPKG_ARGS += "${@['', '--add-exclude ' + ' --add-exclude '.join((d.getVar('PACKAGE_EXCLUDE') or "").split())][(d.getVar("PACKAGE_EXCLUDE") or "").strip() != ""]}"
 
 OPKGLIBDIR ??= "${localstatedir}/lib"
+OPKGSTATUSDIR ??= "${OPKGLIBDIR}/opkg/"
+OPKGLISTSDIR ??= "${OPKGLIBDIR}/opkg/lists/"
+OPKGINFODIR ??= "${OPKGLIBDIR}/opkg/info/"
 
 python do_package_ipk () {
     workdir = d.getVar('WORKDIR')
