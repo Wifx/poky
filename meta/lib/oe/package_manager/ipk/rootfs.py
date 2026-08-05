@@ -331,17 +331,17 @@ class PkgRootfs(DpkgOpkgRootfs):
 
     @staticmethod
     def _depends_list():
-        return ['IPKGCONF_SDK', 'IPK_FEED_URIS', 'DEPLOY_DIR_IPK', 'IPKGCONF_TARGET', 'INC_IPK_IMAGE_GEN', 'OPKG_ARGS', 'OPKGLIBDIR', 'OPKG_PREPROCESS_COMMANDS', 'OPKG_POSTPROCESS_COMMANDS', 'OPKGLIBDIR']
+        return ['IPKGCONF_SDK', 'IPK_FEED_URIS', 'DEPLOY_DIR_IPK', 'IPKGCONF_TARGET', 'INC_IPK_IMAGE_GEN', 'OPKG_ARGS', 'OPKGLIBDIR', 'OPKGINFODIR', 'OPKGSTATUSDIR', 'OPKG_PREPROCESS_COMMANDS', 'OPKG_POSTPROCESS_COMMANDS', 'OPKGLIBDIR']
 
     def _get_delayed_postinsts(self):
         status_file = os.path.join(self.image_rootfs,
-                                   self.d.getVar('OPKGLIBDIR').strip('/'),
-                                   "opkg", "status")
+                                   self.d.getVar('OPKGSTATUSDIR').strip('/'),
+                                   "status")
         return self._get_delayed_postinsts_common(status_file)
 
     def _save_postinsts(self):
         dst_postinst_dir = self.d.expand("${IMAGE_ROOTFS}${sysconfdir}/ipk-postinsts")
-        src_postinst_dir = self.d.expand("${IMAGE_ROOTFS}${OPKGLIBDIR}/opkg/info")
+        src_postinst_dir = self.d.expand("${IMAGE_ROOTFS}${OPKGINFODIR}")
         return self._save_postinsts_common(dst_postinst_dir, src_postinst_dir)
 
     def _log_check(self):
