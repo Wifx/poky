@@ -185,11 +185,16 @@ class OpkgPM(OpkgDpkgPM):
             create_packages_dir(self.d, self.deploy_dir, d.getVar("DEPLOY_DIR_IPK"), "package_write_ipk", filterbydependencies)
 
         self.opkg_dir = oe.path.join(target_rootfs, self.d.getVar('OPKGLIBDIR'), "opkg")
-        bb.utils.mkdirhier(self.opkg_dir)
+        if not os.path.exists(self.opkg_dir):
+            bb.utils.mkdirhier(self.opkg_dir)
 
         self.saved_opkg_dir = self.d.expand('${T}/saved/%s' % self.task_name)
         if not os.path.exists(self.d.expand('${T}/saved')):
             bb.utils.mkdirhier(self.d.expand('${T}/saved'))
+
+        self.opkg_status_dir = oe.path.join(target_rootfs, self.d.getVar('OPKGSTATUSDIR'))
+        if not os.path.exists(self.opkg_status_dir):
+            bb.utils.mkdirhier(self.opkg_status_dir)
 
         self.from_feeds = (self.d.getVar('BUILD_IMAGES_FROM_FEEDS') or "") == "1"
         if self.from_feeds:
@@ -201,11 +206,11 @@ class OpkgPM(OpkgDpkgPM):
 
     def mark_packages(self, status_tag, packages=None):
         """
-        This function will change a package's status in /var/lib/opkg/status file.
+        This function will change a package's status in opkg_status_dir/status file.
         If 'packages' is None then the new_status will be applied to all
         packages
         """
-        status_file = os.path.join(self.opkg_dir, "status")
+        status_file = os.path.join(self.opkg_status_dir, "status")
 
         with open(status_file, "r") as sf:
             with open(status_file + ".tmp", "w+") as tmp_sf:
@@ -266,17 +271,21 @@ class OpkgPM(OpkgDpkgPM):
                                         self.d.getVar('FEED_DEPLOYDIR_BASE_URI'),
                                         arch))
 
-                        if self.d.getVar('OPKGLIBDIR') != '/var/lib':
-                            # There is no command line option for this anymore, we need to add
-                            # info_dir and status_file to config file, if OPKGLIBDIR doesn't have
-                            # the default value of "/var/lib" as defined in opkg:
-                            # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_LISTS_DIR     VARDIR "/lib/opkg/lists"
-                            # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_INFO_DIR      VARDIR "/lib/opkg/info"
-                            # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_STATUS_FILE   VARDIR "/lib/opkg/status"
-                            cfg_file.write("option info_dir     %s\n" % os.path.join(self.d.getVar('OPKGLIBDIR'), 'opkg', 'info'))
-                            cfg_file.write("option lists_dir    %s\n" % os.path.join(self.d.getVar('OPKGLIBDIR'), 'opkg', 'lists'))
-                            cfg_file.write("option status_file  %s\n" % os.path.join(self.d.getVar('OPKGLIBDIR'), 'opkg', 'status'))
+                        # There is no command line option for this anymore, we need to add
+                        # info_dir and status_file to config file, if OPKGLIBDIR doesn't have
+                        # the default value of "/var/lib" as defined in opkg:
+                        # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_LISTS_DIR     VARDIR "/lib/opkg/lists"
+                        # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_INFO_DIR      VARDIR "/lib/opkg/info"
+                        # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_STATUS_FILE   VARDIR "/lib/opkg/status"
 
+                        if self.d.getVar('OPKGINFODIR') != '/var/lib/opkg/info/':
+                            cfg_file.write("option info_dir     %s\n" % self.d.getVar('OPKGINFODIR'))
+
+                        if self.d.getVar('OPKGLISTSDIR') != '/var/lib/opkg/lists/':
+                            cfg_file.write("option lists_dir    %s\n" % self.d.getVar('OPKGLISTSDIR'))
+
+                        if self.d.getVar('OPKGSTATUSDIR') != '/var/lib/opkg/':
+                            cfg_file.write("option status_file  %s\n" % os.path.join(self.d.getVar('OPKGSTATUSDIR'), 'status'))
 
     def _create_config(self):
         with open(self.config_file, "w+") as config_file:
@@ -293,16 +302,21 @@ class OpkgPM(OpkgDpkgPM):
                     config_file.write("src oe-%s file:%s\n" %
                                       (arch, pkgs_dir))
 
-            if self.d.getVar('OPKGLIBDIR') != '/var/lib':
-                # There is no command line option for this anymore, we need to add
-                # info_dir and status_file to config file, if OPKGLIBDIR doesn't have
-                # the default value of "/var/lib" as defined in opkg:
-                # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_LISTS_DIR     VARDIR "/lib/opkg/lists"
-                # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_INFO_DIR      VARDIR "/lib/opkg/info"
-                # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_STATUS_FILE   VARDIR "/lib/opkg/status"
-                config_file.write("option info_dir     %s\n" % os.path.join(self.d.getVar('OPKGLIBDIR'), 'opkg', 'info'))
-                config_file.write("option lists_dir    %s\n" % os.path.join(self.d.getVar('OPKGLIBDIR'), 'opkg', 'lists'))
-                config_file.write("option status_file  %s\n" % os.path.join(self.d.getVar('OPKGLIBDIR'), 'opkg', 'status'))
+            # There is no command line option for this anymore, we need to add
+            # info_dir and status_file to config file, if OPKGLIBDIR doesn't have
+            # the default value of "/var/lib" as defined in opkg:
+            # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_LISTS_DIR     VARDIR "/lib/opkg/lists"
+            # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_INFO_DIR      VARDIR "/lib/opkg/info"
+            # libopkg/opkg_conf.h:#define OPKG_CONF_DEFAULT_STATUS_FILE   VARDIR "/lib/opkg/status"
+
+            if self.d.getVar('OPKGINFODIR') != '/var/lib/opkg/info/':
+                config_file.write("option info_dir     %s\n" % self.d.getVar('OPKGINFODIR'))
+
+            if self.d.getVar('OPKGLISTSDIR') != '/var/lib/opkg/lists/':
+                config_file.write("option lists_dir    %s\n" % self.d.getVar('OPKGLISTSDIR'))
+
+            if self.d.getVar('OPKGSTATUSDIR') != '/var/lib/opkg/':
+                config_file.write("option status_file  %s\n" % os.path.join(self.d.getVar('OPKGSTATUSDIR'), 'status'))
 
     def insert_feeds_uris(self, feed_uris, feed_base_paths, feed_archs):
         if feed_uris == "":
